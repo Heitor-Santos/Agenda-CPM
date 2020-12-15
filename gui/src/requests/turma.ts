@@ -1,4 +1,3 @@
-import axios from 'axios'
 import {Turma} from '../../../common/interfaces'
 
 const turmas: Turma[] = [{nome:"5º A"},{nome:"6º A"},{nome:"7º A"},{nome:"8º A"}]
