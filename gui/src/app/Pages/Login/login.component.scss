@@ -1,35 +1,33 @@
-.example-spacer {
-  flex: 1 1 auto;
+form{
+  width: 25%;
+  margin-left: 37.5%;
+  margin-top: 5%;
 }
-
-p{
-  visibility: hidden;
+.form-field{
+  width: 90%;
+  margin-top: 10px;
 }
-table {
-  width: 80%;
-  margin-left: 10%;
-  margin-right: 10%;
-  margin-bottom: 5%;
-}
-.select-turma{
-  margin-top: 1%;
-  margin-left: 10%;
-  width: 80%;
-}
-.loading{
-  margin-top: 1%;
-  margin-left: 10%;
-  width: 80%;
-  align-items: center;
-  justify-content: center;
-  display: flex;
+#card-login{
   text-align: center;
+  border-radius: 5%;
+  height: 55vh;
+  font-size: 16px;
+}
+#bt-login{
+  height: 50px;
+  width: 100px;
+}
+#criar-conta{
+  text-decoration: none;
+  font-size: 12px;
+  color: gray;
 }
 @media only screen and (max-width: 599px) {
-  table {
+  form {
     width: 90%;
     margin-left: 5%;
     margin-right: 5%;
+    margin-top: 10%;
   }
   .select-turma{
     margin-left: 5%;
@@ -39,47 +37,4 @@ table {
     margin-left: 5%;
     width: 90%;
   }
-}
-tr.example-detail-row {
-  height: 0;
-}
-
-tr.example-element-row:not(.example-expanded-row):hover {
-  background: whitesmoke;
-}
-
-tr.example-element-row:not(.example-expanded-row):active {
-  background: #efefef;
-}
-
-.example-element-row td {
-  border-bottom-width: 0;
-}
-
-.example-element-detail {
-  overflow: hidden;
-  display: flex;
-}
-
-.example-element-diagram {
-  min-width: 80px;
-  border: 2px solid black;
-  padding: 8px;
-  font-weight: lighter;
-  margin: 8px 0;
-  height: 104px;
-}
-
-.example-element-symbol {
-  font-weight: bold;
-  font-size: 40px;
-  line-height: normal;
-}
-
-.example-element-description {
-  padding: 16px;
-}
-
-.example-element-description-attribution {
-  opacity: 0.5;
 }

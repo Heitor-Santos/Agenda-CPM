@@ -4,6 +4,7 @@ import { NgModule } from '@angular/core';
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module'
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatCheckboxModule} from '@angular/material/checkbox';
@@ -81,7 +82,9 @@ import { LoginComponent } from './Pages/Login/login.component';
     MatSortModule,
     MatPaginatorModule,
     NgxSkeletonLoaderModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
