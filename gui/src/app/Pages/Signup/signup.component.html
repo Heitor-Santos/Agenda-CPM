@@ -1,7 +1,25 @@
 <form>
   <mat-card id="card-login">
     <img src="assets/logo.png" style="height: 70px;"/> 
-    <p>Faça login para poder acessar a gerência</p>
+    <p>Crie sua conta de professor para poder acessar a gerência</p>
+    <p>
+      <mat-form-field class="form-field">
+        <mat-label>Digite o código dado pelo seu coordenador</mat-label>
+        <input matInput placeholder="5XH7S" [formControl]="codeFormControl">
+        <mat-error *ngIf="codeFormControl.hasError('required')">
+          O código é <strong>obrigatório</strong>
+        </mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field class="form-field">
+        <mat-label>Digite o seu nome</mat-label>
+        <input matInput placeholder="Fulano Souza Santos" [formControl]="nameFormControl">
+        <mat-error *ngIf="nameFormControl.hasError('required')">
+          O nome é <strong>obrigatório</strong>
+        </mat-error>
+      </mat-form-field>
+    </p>
     <p>
       <mat-form-field class="form-field">
         <mat-label>Digite seu email</mat-label>
@@ -27,7 +45,5 @@
     <p>
       <button mat-flat-button color="primary" id="bt-login">Login</button>
     </p>
-    <a href="https://google.com" id="criar-conta">Ainda não tem conta? Crie uma!
-    </a>
   </mat-card>
 </form>

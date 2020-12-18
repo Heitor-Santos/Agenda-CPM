@@ -39,13 +39,14 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatPaginatorModule} from '@angular/material/paginator';
 import { HomeComponent } from './Pages/Home/home.component';
 import { LoginComponent } from './Pages/Login/login.component';
-
+import { SignupComponent } from './Pages/Signup/signup.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     LoginComponent,
+    SignupComponent
   ],
   imports: [
     BrowserModule,

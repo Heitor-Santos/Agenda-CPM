@@ -10,18 +10,24 @@ class MyErrorStateMatcher implements ErrorStateMatcher {
   }
 }
 @Component({
-  selector: 'app-login',
-  templateUrl: './login.component.html',
-  styleUrls: ['./login.component.scss'],
+  selector: 'app-signup',
+  templateUrl: './signup.component.html',
+  styleUrls: ['./signup.component.scss'],
 })
-export class LoginComponent {
+export class SignupComponent {
   emailFormControl = new FormControl('', [
     Validators.required,
     Validators.email,
   ]);
   passwordFormControl = new FormControl('',[
     Validators.required
-  ])
+  ]);
+  nameFormControl = new FormControl('',[
+    Validators.required
+  ]);
+  codeFormControl = new FormControl('',[
+    Validators.required
+  ]);
   matcher = new MyErrorStateMatcher()
   constructor(private changeDetectorRefs: ChangeDetectorRef, private router: Router){}
 }
