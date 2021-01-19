@@ -40,13 +40,17 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import { HomeComponent } from './Pages/Home/home.component';
 import { LoginComponent } from './Pages/Login/login.component';
 import { SignupComponent } from './Pages/Signup/signup.component';
+import { AdminComponent, DialogDeleteProf, DialogDeleteTurma } from './Pages/Admin/admin.component'
 
 @NgModule({
   declarations: [
     AppComponent,
     HomeComponent,
     LoginComponent,
-    SignupComponent
+    SignupComponent,
+    AdminComponent,
+    DialogDeleteProf,
+    DialogDeleteTurma
   ],
   imports: [
     BrowserModule,

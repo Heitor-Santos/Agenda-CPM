@@ -4,3 +4,16 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+.snack-error{
+    background-color: red;
+    text-align: center;
+}
+.snack-warning{
+    background-color: #ffcc00;
+    text-align: center;
+    color: black;
+}
+.snack-success{
+    background-color: #339900;
+    text-align: center;
+}

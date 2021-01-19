@@ -1,0 +1,71 @@
+<div class="select-turma">
+  <div class="grid">
+    <div class="card">
+      <mat-card>
+        <mat-card-title>Código convite</mat-card-title>
+        <mat-card-content style="background-color: #dcdcdc; text-align: center;">
+          <p>
+            <button (click)="updateCode()" style="float: right;" title="Gerar código novo" mat-icon-button>
+              <mat-icon>autorenew</mat-icon>
+            </button>
+            <br />
+            <br />
+          </p>
+          <p id="code" class="flex-box" *ngIf="!isLoadingCode else loading">
+            {{code}}
+          </p>
+        </mat-card-content>
+        <mat-card-subtitle>Dê esse código aos professores</mat-card-subtitle>
+      </mat-card>
+    </div>
+    <p class="list-title">Professores cadastrados:</p>
+    <mat-list class="list" *ngIf="!isLoading else loading">
+      <mat-list-item *ngFor="let prof of professores; let i = index" class="prof">
+        <span>
+          <p class="info-prof">{{formalName(prof.nome)}}</p>
+          <p class="info-prof email-prof">{{prof.email}}</p>
+        </span>
+        <span style="width: 100%;">
+          <button mat-icon-button title="excluir professor" style="float: right;" (click)="openDialogDeleteProf(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <mat-card>
+        <mat-card-title>Nova turma</mat-card-title>
+        <mat-card-content style="margin-top: 5vh;" *ngIf="!isLoadingCriar else loading">
+          <mat-form-field style=" width: 100%">
+            <mat-label>Nome da turma</mat-label>
+            <input id="inputTurma" matInput placeholder="" value=""/>
+          </mat-form-field>
+          <p style="margin-top: 3vh;">
+            <button mat-flat-button color="primary" (click)= "createTurma()" >Criar turma</button>
+          </p>
+        </mat-card-content>
+      </mat-card>
+    </div>
+    <p class="list-title">Turmas cadastradas:</p>
+    <mat-list class="list" *ngIf="!isLoadingTurma else loading">
+      <mat-list-item *ngFor="let turma of turmas; let i = index" class="prof">
+        <span>
+          <p class="info-prof">{{turma.nome}}</p>
+        </span>
+        <span style="width: 100%;">
+          <button mat-icon-button title="excluir professor" style="float: right;" (click)="openDialogDeleteTurma(i)">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </span>
+      </mat-list-item>
+    </mat-list>
+  </div>
+  <ng-template #loading>
+    <div class="loading flex-box">
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+  </ng-template>
+</div>
