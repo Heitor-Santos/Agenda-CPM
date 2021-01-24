@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Excluir avaliação</h1>
+<div mat-dialog-content>
+  <p>Tem certeza que deseja excluir essa avaliação?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button cdkFocusInitial (click)="cancel()">Cancelar</button>
+  <button mat-button [mat-dialog-close]="data.aval">OK</button>
+</div>

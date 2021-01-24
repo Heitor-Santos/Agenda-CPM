@@ -1,17 +1,16 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
-
 import { AppComponent } from './app.component';
 import { AppRoutingModule } from './app-routing.module'
 import { NgxSkeletonLoaderModule } from 'ngx-skeleton-loader';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import {MatCheckboxModule} from '@angular/material/checkbox';
 import {MatButtonModule} from '@angular/material/button';
 import {MatInputModule} from '@angular/material/input';
 import {MatAutocompleteModule} from '@angular/material/autocomplete';
-import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatDatepickerModule, } from '@angular/material/datepicker';
+import {MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
 import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatRadioModule} from '@angular/material/radio';
 import {MatSelectModule} from '@angular/material/select';
@@ -41,6 +40,7 @@ import { HomeComponent } from './Pages/Home/home.component';
 import { LoginComponent } from './Pages/Login/login.component';
 import { SignupComponent } from './Pages/Signup/signup.component';
 import { AdminComponent, DialogDeleteProf, DialogDeleteTurma } from './Pages/Admin/admin.component'
+import { ProfessorComponent, DialogInfoAval } from './Pages/Professor/prof.component';
 
 @NgModule({
   declarations: [
@@ -50,7 +50,9 @@ import { AdminComponent, DialogDeleteProf, DialogDeleteTurma } from './Pages/Adm
     SignupComponent,
     AdminComponent,
     DialogDeleteProf,
-    DialogDeleteTurma
+    DialogDeleteTurma,
+    ProfessorComponent,
+    DialogInfoAval
   ],
   imports: [
     BrowserModule,
@@ -61,6 +63,7 @@ import { AdminComponent, DialogDeleteProf, DialogDeleteTurma } from './Pages/Adm
     MatInputModule,
     MatAutocompleteModule,
     MatDatepickerModule,
+    MatNativeDateModule,
     MatFormFieldModule,
     MatRadioModule,
     MatSelectModule,
@@ -91,7 +94,9 @@ import { AdminComponent, DialogDeleteProf, DialogDeleteTurma } from './Pages/Adm
     FormsModule,
     ReactiveFormsModule
   ],
-  providers: [],
+  providers: [
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR'}
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

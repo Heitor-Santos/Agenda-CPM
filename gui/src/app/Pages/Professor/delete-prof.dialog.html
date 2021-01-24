@@ -1,0 +1,8 @@
+<h1 mat-dialog-title>Excluir professor</h1>
+<div mat-dialog-content>
+  <p>Deseja excluir {{data.profToDelete.nome}}?</p>
+</div>
+<div mat-dialog-actions>
+  <button mat-button cdkFocusInitial (click)="cancel()">Cancelar</button>
+  <button mat-button [mat-dialog-close]="data.profToDelete.nome">OK</button>
+</div>

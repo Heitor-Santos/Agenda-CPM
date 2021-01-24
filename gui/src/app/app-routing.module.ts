@@ -4,6 +4,7 @@ import { HomeComponent } from "./Pages/Home/home.component";
 import { LoginComponent } from "./Pages/Login/login.component";
 import { SignupComponent } from "./Pages/Signup/signup.component";
 import { AdminComponent } from "./Pages/Admin/admin.component"
+import { ProfessorComponent } from './Pages/Professor/prof.component';
 
 const routes: Routes = [
   {
@@ -22,6 +23,11 @@ const routes: Routes = [
   {
     path:"admin",
     component:AdminComponent,
+    pathMatch:"full"
+  },
+  {
+    path:'prof',
+    component: ProfessorComponent,
     pathMatch:"full"
   }
 ]

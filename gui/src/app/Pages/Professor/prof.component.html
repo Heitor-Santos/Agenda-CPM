@@ -1,0 +1,69 @@
+<div class="select-turma">
+  <div class='grid'>
+    <p class="list-title">Minhas avaliações:</p>
+    <div class="list">
+      <mat-acordeon *ngIf="!isLoading else loading">
+        <mat-expansion-panel style="border-radius: 0ch;" *ngFor="let aval of avaliacoes; let i = index">
+          <mat-expansion-panel-header>
+            <mat-panel-title>
+              {{aval.titulo}}
+            </mat-panel-title>
+          </mat-expansion-panel-header>
+          <p>Título: {{aval.titulo}}</p>
+          <p>Turma: {{aval.turma}}</p>
+          <p>Descrição: {{aval.descricao}}</p>
+          <p>Data: {{aval.data}}</p>
+          <p style="text-align: center;"><button mat-raised-button color="warn"
+              (click)="openDialogAval(i)">Deletar</button></p>
+        </mat-expansion-panel>
+      </mat-acordeon>
+    </div>
+  </div>
+  <div class="grid">
+    <p class="list-title">Nova avaliação:</p>
+    <div class="list">
+      <form [formGroup]="registerForm" (submit)="createAvaliacao()">
+        <mat-card *ngIf="!isLoadingCriar else loading">
+          <mat-form-field style=" width: 100%; margin-top: 10px;">
+            <mat-label>Turma</mat-label>
+            <mat-select [(value)]="selected" formControlName="turma">
+              <mat-option *ngFor="let turma of turmas" value={{turma.nome}}>{{turma.nome}}</mat-option>
+            </mat-select>
+            <mat-error *ngIf="registerForm.get('turma').hasError('required')">{{errMsg}}</mat-error>
+          </mat-form-field>
+          <mat-form-field style=" width: 100%">
+            <mat-label>Disciplina</mat-label>
+            <input formControlName="disciplina" id="inputDisciplina" matInput placeholder="" value="" />
+            <mat-error *ngIf="registerForm.get('disciplina').hasError('required')">{{errMsg}}</mat-error>
+          </mat-form-field>
+          <mat-form-field style=" width: 100%">
+            <mat-label>Título</mat-label>
+            <input  id="inputTitulo" formControlName="titulo" matInput placeholder="" value=""/>
+            <mat-error *ngIf="registerForm.get('titulo').hasError('required')">{{errMsg}}</mat-error>
+          </mat-form-field>
+          <mat-form-field style=" width: 100%">
+            <mat-label>Data</mat-label>
+            <input id="inputData" formControlName="data" matInput readonly [matDatepicker]="picker" />
+            <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+            <mat-error *ngIf="registerForm.get('data').hasError('required')">{{errMsg}}</mat-error>
+          </mat-form-field>
+          <mat-form-field style=" width: 100%">
+            <mat-label>Descrição</mat-label>
+            <textarea value="" id="inputDesc" formControlName="desc" matInput ></textarea>
+            <mat-error *ngIf="registerForm.get('desc').hasError('required')">{{errMsg}}</mat-error>
+          </mat-form-field>
+          <p style="margin-top: 3vh; text-align: center;">
+            <button [disabled]="!registerForm.valid" mat-flat-button color="primary" type="submit">Criar avaliação</button>
+          </p>
+        </mat-card>
+      </form>
+    </div>
+  </div>
+  <ng-template #loading>
+    <div class="loading flex-box">
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+  </ng-template>
+</div>

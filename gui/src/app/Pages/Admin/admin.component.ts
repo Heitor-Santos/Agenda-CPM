@@ -56,7 +56,6 @@ export class AdminComponent {
       })
     }
     this.isLoadingCriar = false;
-    (<HTMLInputElement>(document.getElementById('inputTurma'))).value = ''
   }
   async deleteProf(index: number): Promise<void> {
     this.isLoading = true
