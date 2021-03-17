@@ -1,5 +1,5 @@
-import { Professor, ProfessorPublic } from '../../../common/interfaces'
-
+import { Professor, ProfessorPublic, RequestResult } from '../../../common/interfaces'
+import axios from 'axios'
 const professores: Professor[] = [
     {
         "nome": "Spears Henson",
@@ -53,22 +53,26 @@ const professores: Professor[] = [
         "code": 'ih56s7'
     }
 ]
-export function getProfessores(): ProfessorPublic[] {
-    return professores.filter(prof=>!prof.hasOwnProperty('code')).map(prof => {
-        return {
-            "nome": prof.nome,
-            "email": prof.email,
-        }
-    });
+
+const api = axios.create({baseURL:'http://localhost:3333/prof'})
+export async function getProfessores(): Promise<RequestResult> {
+    const response = await api.get('/professores')
+    return response.data
 }
 
 export function getProfCode(profEmail:string):string{
     return professores.find(prof=>prof.email==profEmail).code
 }
 
-export function remProf(profEmail: string):void{
-    let indexToDelete = professores.findIndex(prof=>prof.email==profEmail)
-    professores.splice(indexToDelete,1)
+export async function sendInvite(email:string):Promise<RequestResult>{
+    console.log("AQUI")
+    const response = await api.post('/invite',{email});
+    return response.data;
+}
+
+export async function remProf(profEmail: string):Promise<RequestResult>{
+    const response = await api.delete(`?email=${profEmail}`)
+    return response.data
 }
 
 export function updateProfCode(profEmail: string):string{

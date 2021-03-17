@@ -6,7 +6,7 @@ export async function getAllTurmas(req: Request, res: Response, db: mongoose.Db)
     let response: RequestResult
     try {
         const turmas: Turma[] = await findTurmas(db)
-        response = { data: JSON.stringify(turmas) }
+        response = { data: turmas }
     }
     catch (error) {
         response = { error: error.valueString() }
@@ -22,16 +22,16 @@ async function findTurmas(db: mongoose.Db): Promise<Turma[]> {
 export async function addTurma(req: Request, res: Response, db: mongoose.Db) {
     let response: RequestResult
     try {
-        if(await existsTurma(req.query.turma as string, db)){
+        if(await existsTurma(req.body.turma as string, db)){
             response = { error: 'Essa turma já existe'}
         }
         else{
-            const turma: Turma = await createTurma(req.query.turma as string, db)
-            response = { data: JSON.stringify(turma)}
+            const turma: Turma = await createTurma(req.body.turma as string, db)
+            response = { data: turma}
         }
     }
     catch (error) {
-        response = { error: error.valueString() }
+        response = { error: "Não conseguimos criar a turma" }
     }
     return res.send(response)
 }

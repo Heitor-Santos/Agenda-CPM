@@ -2,7 +2,7 @@ export interface Turma{
     nome: string
 }
 export interface RequestResult{
-    data?: string,
+    data?: any,
     error?: string
 }
 export interface Avaliacao{
@@ -11,7 +11,7 @@ export interface Avaliacao{
     professorEmail:string,
     descricao: string,
     turma: string,
-    data: string,
+    data: Date,
     disciplina: string,
     titulo: string
 }

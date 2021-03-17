@@ -22,12 +22,13 @@ export class HomeComponent {
   turmas:Turma[]
   avaliacoes: Avaliacao[]
   expandedElement: Avaliacao | null;
-  selected:string="5º A"
+  selected:string
   isLoading: boolean;
   constructor(private changeDetectorRefs: ChangeDetectorRef, private router: Router){}
-  ngOnInit() {
-    this.turmas = getTurmas()
-    this.avaliacoes = getAvaliacoes(this.selected)
+  async ngOnInit() {
+    this.turmas = await (await getTurmas()).data
+    this.selected = this.turmas[0]?.nome || '' 
+    this.avaliacoes = await getAvaliacoes(this.selected)
     this.isLoading = false;
   }
   async changeTurma(){
@@ -37,7 +38,7 @@ export class HomeComponent {
     await this.sleep(2000)
     this.isLoading = false;
     console.log('ola')
-    this.avaliacoes = getAvaliacoes(this.selected)
+    this.avaliacoes = await getAvaliacoes(this.selected)
     console.log(this.avaliacoes)
     this.changeDetectorRefs.detectChanges()
   }

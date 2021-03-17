@@ -1,9 +1,20 @@
-import {Component, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { addTurma, getTurmas, remTurma } from '../../../requests/turma'
-import { ProfessorPublic, Turma } from '../../../../../common/interfaces'
-import { getProfessores, getProfCode, remProf, updateProfCode } from 'src/requests/professor';
+import { ProfessorPublic, RequestResult, Turma } from '../../../../../common/interfaces'
+import { getProfessores, remProf } from 'src/requests/professor';
+
 import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
+import { ErrorStateMatcher } from '@angular/material/core';
+import { sendInvite } from 'src/requests/admin';
+
+class MyErrorStateMatcher implements ErrorStateMatcher {
+  isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
+    const isSubmitted = form && form.submitted;
+    return !!(control && control.invalid && (control.dirty || control.touched || isSubmitted));
+  }
+}
 
 @Component({
   selector: 'app-admin',
@@ -15,59 +26,80 @@ export class AdminComponent {
   professores: ProfessorPublic[]
   turmas: Turma[]
   isLoading: boolean
-  isLoadingCode: boolean
+  isLoadingInvite: boolean
   isLoadingTurma: boolean
   isLoadingCriar: boolean
+  emailFormControl = new FormControl('', [
+    Validators.required,
+    Validators.email,
+  ]);
+  matcher = new MyErrorStateMatcher()
   constructor(public dialog: MatDialog, public snackBar: MatSnackBar) { }
-  ngOnInit() {
+
+  async ngOnInit() {
     this.isLoading = false
-    this.isLoadingCode = false
+    this.isLoadingInvite = false
     this.isLoadingTurma = false
     this.isLoadingCriar = false
-    this.turmas = getTurmas()
-    this.professores = getProfessores()
-    this.code = getProfCode("corinabrock@urbanshee")
+    this.turmas = (await getTurmas()).data
+    this.professores = (await getProfessores()).data
   }
+
   formalName(nome: string): string {
     const nomes = nome.split(' ')
-    return `${nomes[0]} ${nomes[nomes.length - 1]}`
+    return nomes.length == 1 ? nomes[0] : `${nomes[0]} ${nomes[nomes.length - 1]}`
   }
-  async createTurma(){
+
+  async createTurma() {
     const nomeTurma = (<HTMLInputElement>(document.getElementById('inputTurma'))).value
-    if(nomeTurma==""){
-      this.snackBar.open("A turma não pode ter nome em branco",undefined,{
-        panelClass:['snack-warning'],
-        duration: 2000
-      })
-      return
+    if (nomeTurma == "") {
+      return await this.openSnack("A turma não pode ter nome em branco", 'snack-warning')
     }
     this.isLoadingCriar = true
-    await this.sleep(3000)
-    if(!addTurma(nomeTurma)){     
-      this.snackBar.open("Já existe uma turma com esse nome",undefined,{
-        panelClass:['snack-error'],
-        duration: 2000
-      })
-    }
-    else{
-      this.snackBar.open("Turma criada",undefined,{
-        panelClass:['snack-success'],
-        duration: 2000
-      })
-    }
+    const response = await addTurma(nomeTurma);
+    await this.handleSnack("Turma criada com sucesso", response);
     this.isLoadingCriar = false;
+    if (response.data) this.turmas.push(response.data)
   }
+
+  async deleteTurma(index: number): Promise<void> {
+    this.isLoadingTurma = true
+    const response = await remTurma(this.turmas[index].nome)
+    await this.handleSnack("Turma excluída", response);
+    this.isLoadingTurma = false;
+    if (response.data) this.turmas.splice(index, 1)
+  }
+
+  async sendProfInvite() {
+    this.isLoadingInvite = true;
+    const profEmail = (<HTMLInputElement>document.getElementById('inputProfessor')).value
+    const response = await sendInvite(profEmail);
+    await this.handleSnack("Convite enviado com sucesso", response);
+    this.isLoadingInvite = false;
+  }
+
   async deleteProf(index: number): Promise<void> {
     this.isLoading = true
-    remProf(this.professores[index].email)
-    await this.sleep(3000)
-    this.professores.splice(index, 1)
+    const response = await remProf(this.professores[index].email)
+    await this.handleSnack("Professor excluído", response);
     this.isLoading = false
-    this.snackBar.open("Professor excluído",undefined,{
-      panelClass:['snack-success'],
-      duration: 2000
+    if(response.data) this.professores.splice(index, 1)
+  }
+  
+  async handleSnack(successMsg: string, apiRes: RequestResult) {
+    const snacks = { "data": successMsg, "error": apiRes.error }
+    const classes = { "data": "snack-success", "error": "snack-error" }
+    const resultKey = Object.keys(apiRes)[0];
+    await this.openSnack(snacks[resultKey], classes[resultKey])
+  }
+
+  async openSnack(msg: string, className: string) {
+    this.snackBar.open(msg, undefined, {
+      panelClass: [className],
+      duration: 2000,
     })
   }
+
   openDialogDeleteProf(index: number): void {
     const dialogRef = this.dialog.open(DialogDeleteProf, {
       width: '250px',
@@ -79,17 +111,7 @@ export class AdminComponent {
       }
     });
   }
-  async deleteTurma(index: number): Promise<void> {
-    this.isLoadingTurma = true
-    remTurma(this.turmas[index].nome)
-    await this.sleep(3000)
-    this.turmas.splice(index, 1)
-    this.isLoadingTurma = false
-    this.snackBar.open("Turma excluída",undefined,{
-      panelClass:['snack-success'],
-      duration: 2000
-    })
-  }
+  
   openDialogDeleteTurma(index: number): void {
     const dialogRef = this.dialog.open(DialogDeleteTurma, {
       width: '250px',
@@ -100,17 +122,6 @@ export class AdminComponent {
         this.deleteTurma(index)
       }
     });
-  }
-  async updateCode(): Promise<void> {
-    this.isLoadingCode = true
-    await this.sleep(3000)
-    this.code = updateProfCode("corinabrock@urbanshee")
-    this.isLoadingCode = false
-  }
-  async sleep(timeout: number) {
-    return new Promise<void>((res, rej) => {
-      setTimeout(() => res(), timeout)
-    })
   }
 }
 @Component({

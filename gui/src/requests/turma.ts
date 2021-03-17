@@ -1,23 +1,22 @@
-import {Turma} from '../../../common/interfaces'
+import {RequestResult, Turma} from '../../../common/interfaces'
+import axios from 'axios'
 
 const turmas: Turma[] = [{nome:"5º A"},{nome:"6º A"},{nome:"7º A"},{nome:"8º A"}]
+const api = axios.create({baseURL:'http://localhost:3333/turma'})
 
-export function getTurmas():Turma[]{
-    return turmas;
+export async function getTurmas():Promise<RequestResult>{
+    const response = await api.get('/turmas')
+    return response.data
 }
 
-export function addTurma(nome:string):Turma{
-    if(jaExisteTurma(nome)) return null;
-    turmas.push({nome})
-    return turmas[turmas.length-1];
+export async function addTurma(nome:string):Promise<RequestResult>{
+    const response = await api.post("/",{turma:nome});
+    return response.data
 }
 
-export function remTurma(nome:string):Turma{
-    if(naoExisteTurma) return null
-    let turmaIndex = turmas.findIndex(turma=>turma.nome==nome)  
-    let turma = turmas[turmaIndex]
-    turmas.splice(turmaIndex,1)
-    return turma;
+export async function remTurma(nome:string):Promise<RequestResult>{
+    const response = await api.delete(`/?turma=${nome}`);
+    return response.data
 }
 
 function jaExisteTurma(nome:string):Turma{
