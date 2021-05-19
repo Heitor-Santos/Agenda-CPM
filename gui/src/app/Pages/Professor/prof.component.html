@@ -1,8 +1,8 @@
-<div class="select-turma">
+<div class="select-turma" *ngIf="allowed">
   <div class='grid'>
     <p class="list-title">Minhas avaliações:</p>
     <div class="list">
-      <mat-acordeon *ngIf="!isLoading else loading">
+      <mat-acordeon *ngIf="!isLoading && avaliacoes && avaliacoes.length else loading">
         <mat-expansion-panel style="border-radius: 0ch;" *ngFor="let aval of avaliacoes; let i = index">
           <mat-expansion-panel-header>
             <mat-panel-title>
@@ -12,7 +12,7 @@
           <p>Título: {{aval.titulo}}</p>
           <p>Turma: {{aval.turma}}</p>
           <p>Descrição: {{aval.descricao}}</p>
-          <p>Data: {{aval.data}}</p>
+          <p>Data: {{aval.data.toLocaleDateString()}}</p>
           <p style="text-align: center;"><button mat-raised-button color="warn"
               (click)="openDialogAval(i)">Deletar</button></p>
         </mat-expansion-panel>
@@ -23,7 +23,7 @@
     <p class="list-title">Nova avaliação:</p>
     <div class="list">
       <form [formGroup]="registerForm" (submit)="createAvaliacao()">
-        <mat-card *ngIf="!isLoadingCriar else loading">
+        <mat-card *ngIf="!isLoadingCriar else loadingCriar">
           <mat-form-field style=" width: 100%; margin-top: 10px;">
             <mat-label>Turma</mat-label>
             <mat-select [(value)]="selected" formControlName="turma">
@@ -61,9 +61,20 @@
     </div>
   </div>
   <ng-template #loading>
+    <div class="loading flex-box" *ngIf="isLoading else noAvals">
+      <mat-progress-spinner color="primary" mode="indeterminate">
+      </mat-progress-spinner>
+    </div>
+  </ng-template>
+  <ng-template #loadingCriar>
     <div class="loading flex-box">
       <mat-progress-spinner color="primary" mode="indeterminate">
       </mat-progress-spinner>
+    </div>
+  </ng-template>
+  <ng-template #noAvals>
+    <div>
+      Nenhuma avaliação agendada
     </div>
   </ng-template>
 </div>

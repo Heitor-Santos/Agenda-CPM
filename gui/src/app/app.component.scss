@@ -1,3 +1,21 @@
 .example-spacer {
     flex: 1 1 auto;
   }
+
+.home{
+  color: black; 
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logout-button{
+  color:white;
+  background-color: #dc3545;
+}
+
+.ger{
+  color: white;
+  background-color: #4CAF50;
+}

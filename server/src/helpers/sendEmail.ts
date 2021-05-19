@@ -14,20 +14,17 @@ export async function sendInvite(to_email: string, link: string) {
 }
 
 async function sendEmail(to_email: string, variables:IVariables, subject: string, file: string) {
-    const account = await nodemailer.createTestAccount();
     const transporter = await nodemailer.createTransport({
-        host: account.smtp.host,
-        port: account.smtp.port,
-        secure: account.smtp.secure,
+        service: 'gmail',
         auth: {
-            user: account.user,
-            pass: account.pass,
+            user: process.env.EMAIL_ACCOUNT,
+            pass: process.env.EMAIL_PASSWORD
         }
     })
     const info = await transporter.sendMail({
         from: {
             name: process.env.EMAIL_NOME || 'Diretoria CPM',
-            address: process.env.EMAIL_ACCOUNT || account.user,
+            address: process.env.EMAIL_ACCOUNT || '',
         },
         to: {
             name: "",
@@ -36,8 +33,6 @@ async function sendEmail(to_email: string, variables:IVariables, subject: string
         subject,
         html: await compileVariables(variables, file)
     })
-    console.log('Message sent: %s', info.messageId);
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 }
 
 async function compileVariables(variables: IVariables, file: string): Promise<string> {

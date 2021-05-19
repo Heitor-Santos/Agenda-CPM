@@ -5,7 +5,7 @@ import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dial
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { getAvaliacoesByProfessor, newAvaliacao, rmvAvaliacao } from 'src/requests/avaliacao';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { sendInvite } from 'src/requests/professor';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -22,13 +22,19 @@ export class ProfessorComponent {
   registerForm: FormGroup
   errMsg: string
   isLoadingInvite: boolean;
-  constructor(public dialog: MatDialog, public snackBar: MatSnackBar, public formBuilder: FormBuilder) { }
-  ngOnInit() {
+  profEmail: string;
+  profName: string;
+  allowed: boolean = false;
+  constructor(public dialog: MatDialog, public snackBar: MatSnackBar, public formBuilder: FormBuilder, private router: Router) { }
+  async ngOnInit() {
     this.isLoading = false
     this.isLoadingCriar = false
     this.selected = ''
     this.isLoadingInvite = false;
-    this.errMsg = 'Esse campo é obrigatório'
+    this.errMsg = 'Esse campo é obrigatório';
+    const prof = JSON.parse(localStorage.getItem("AgendaCPMuser")); 
+    this.profEmail = prof["email"];
+    this.profName = prof["nome"];
     this.registerForm = this.formBuilder.group({
       turma: [, { validators: [Validators.required], updateOn: "change" }],
       disciplina: [, { validators: [Validators.required], updateOn: "change", }],
@@ -36,8 +42,14 @@ export class ProfessorComponent {
       data: [, { validators: [Validators.required], updateOn: "change" }],
       desc: [, { validators: [Validators.required], updateOn: "change" }],
     });
-    //this.turmas = getTurmas()
-    this.avaliacoes = getAvaliacoesByProfessor('francesharris@emoltra')
+    this.turmas = (await getTurmas()).data;
+    const response = await getAvaliacoesByProfessor(this.profEmail)
+    if(response.error && response.error=="JWT token is missing" || response.error=="Invalid JWT token"){
+      this.router.navigateByUrl("/")
+    }
+    this.allowed = true;
+    this.avaliacoes = response.data
+    this.avaliacoes.map(aval=>aval.data = new Date(aval.data));
   }
   async createAvaliacao() {
     const desc = (<HTMLInputElement>document.getElementById('inputDesc')).value
@@ -45,25 +57,25 @@ export class ProfessorComponent {
     const disciplina = (<HTMLInputElement>document.getElementById('inputDisciplina')).value
     const titulo = (<HTMLInputElement>document.getElementById('inputTitulo')).value
     this.isLoadingCriar = true
-    await this.sleep(2000)
     const newAval = {
-      "professor": "Frances Harris",
-      "professorEmail": "francesharris@emoltra",
+      "professor": this.profName,
+      "professorEmail": this.profEmail,
       "descricao": desc,
       "turma": this.selected,
       "data": data,
       "disciplina": disciplina,
       "titulo": titulo,
-      "id": '17'
     }
-    //const result: RequestResult = await newAvaliacao(newAval);
+    const result: RequestResult = await newAvaliacao(newAval);
+    const resAval = result.data;
     this.selected = ''
+    if (resAval) {
+      resAval.data = new Date(resAval.data);
+      this.avaliacoes.push(resAval)
+      this.openSnack("Avaliação criada com sucesso", "snack-success")
+    }
+    else this.openSnack(result.error, "snack-error");
     this.isLoadingCriar = false;
-    // if (result.data) {
-    //   //this.avaliacoes.push(newAval)
-    //   this.openSnack("Avaliação criada com sucesso", "snack-success")
-    // }
-    // else this.openSnack(result.error, "snack-error");
   }
   async openSnack(msg: string, className: string) {
     this.snackBar.open(msg, undefined, {
@@ -76,13 +88,6 @@ export class ProfessorComponent {
     const classes = {"data":"snack-success","error":"snack-error"}
     const resultKey = Object.keys(apiRes)[0];
     await this.openSnack(snacks[resultKey],classes[resultKey])
-  }
-  async sendProfInvite(){
-    this.isLoadingInvite = true;
-    const profEmail = (<HTMLInputElement>document.getElementById('inputProfessor')).value
-    const response = await sendInvite(profEmail);
-    await this.handleSnack("Convite enviado com sucesso", response);
-    this.isLoadingInvite = false;
   }
 
   async sleep(timeout: number) {
@@ -107,6 +112,7 @@ export class ProfessorComponent {
     this.isLoading = true
     await this.sleep(2000)
     rmvAvaliacao(id)
+    this.avaliacoes = this.avaliacoes.filter(aval=>aval.id!=id);
     this.isLoading = false
     this.openSnack('Avaliação removida com sucesso', 'snack-success')
   }

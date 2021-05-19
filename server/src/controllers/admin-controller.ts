@@ -5,12 +5,16 @@ import auth from '../helpers/auth';
 import { sendInvite } from '../helpers/sendEmail';
 
 export async function invite(req: Request, res: Response, db: mongoose.Db) {
+    const prof = await db.collection('professores').findOne({ email: req.user.email });
+    if (prof.type != "administrador") {
+        return res.send({ error: "Você não possui permissão para essa operação" });
+    }
     const email = req.body.email as string;
     const token = sign({}, auth.jwt.secret, {
         subject: email,
         expiresIn: auth.jwt.expiresIn,
     });
-    const link = `http://localhost:4200/signup?token=${token}`
+    const link = `${process.env.FRONT_URL}/signup?token=${token}`
     try {
         await sendInvite(email, link);
         await insertInvite(email, token, db);

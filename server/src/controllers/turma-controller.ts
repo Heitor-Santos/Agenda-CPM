@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import mongoose from 'mongodb'
-import { Turma, RequestResult} from '../../../common/interfaces'
+import { Turma, RequestResult } from '../../../common/interfaces'
 
 export async function getAllTurmas(req: Request, res: Response, db: mongoose.Db) {
     let response: RequestResult
@@ -9,25 +9,29 @@ export async function getAllTurmas(req: Request, res: Response, db: mongoose.Db)
         response = { data: turmas }
     }
     catch (error) {
-        response = { error: error.valueString() }
+        response = { error: "Algo deu errado" }
     }
     return res.send(response)
 }
 
 async function findTurmas(db: mongoose.Db): Promise<Turma[]> {
-    const turmas: Turma[] = await db.collection('turmas').find({}).project({ _id: 0}).toArray()
+    const turmas: Turma[] = await db.collection('turmas').find({}).project({ _id: 0 }).toArray()
     return turmas;
 }
 
 export async function addTurma(req: Request, res: Response, db: mongoose.Db) {
     let response: RequestResult
     try {
-        if(await existsTurma(req.body.turma as string, db)){
-            response = { error: 'Essa turma já existe'}
+        const prof = await db.collection('professores').findOne({ email: req.user.email });
+        if (prof.type != "administrador") {
+            return res.send({ error: "Você não possui permissão para essa operação" }); 
         }
-        else{
+        if (await existsTurma(req.body.turma as string, db)) {
+            response = { error: 'Essa turma já existe' }
+        }
+        else {
             const turma: Turma = await createTurma(req.body.turma as string, db)
-            response = { data: turma}
+            response = { data: turma }
         }
     }
     catch (error) {
@@ -38,7 +42,7 @@ export async function addTurma(req: Request, res: Response, db: mongoose.Db) {
 
 async function existsTurma(nome: string, db: mongoose.Db): Promise<boolean> {
     const turma = await db.collection('turmas').findOne({ nome })
-    if(turma) return true
+    if (turma) return true
     return false
 }
 
@@ -52,16 +56,20 @@ async function createTurma(nome: string, db: mongoose.Db): Promise<Turma> {
 export async function rmvTurma(req: Request, res: Response, db: mongoose.Db) {
     let response: RequestResult
     try {
-        if(await !existsTurma(req.query.turma as string, db)){
-            response = { error: 'Essa turma não existe'}
+        const prof = await db.collection('professores').findOne({ email: req.user.email });
+        if (prof.type != "administrador") {
+            return res.send({ error: "Você não possui permissão para essa operação" }); 
         }
-        else{
+        if (await !existsTurma(req.query.turma as string, db)) {
+            response = { error: 'Essa turma não existe' }
+        }
+        else {
             await deleteTurma(req.query.turma as string, db)
-            response = { data: 'null'}
+            response = { data: 'null' }
         }
     }
     catch (error) {
-        response = { error: error.valueString() }
+        response = { error: "Algo deu errado" }
     }
     return res.send(response)
 }

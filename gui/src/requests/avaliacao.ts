@@ -1,50 +1,55 @@
 import { Avaliacao, RequestResult } from '../../../common/interfaces'
 import axios from 'axios'
 
-let avaliacoes: Avaliacao[] = []
+const location = window.location.href;
+const baseName = location.split('/')[0];
+
+const api = axios.create({ baseURL: location.includes('http://localhost:4200/') ? 'http://localhost:3333/api/aval' : `${baseName}/api/aval` })
 
 export async function getAvaliacoes(turma: string): Promise<Avaliacao[]> {
-  const data = (await axios.get('http://localhost:3333/aval/avaliacoes?turma='+turma)).data
-  console.log(data)
+  const data = (await api.get('/avaliacoes?turma=' + turma)).data
   return JSON.parse(data.data)
 }
 
-export function getAvaliacoesByProfessor(email: string): Avaliacao[] {
-  return avaliacoes.filter(aval => aval.professorEmail == email)
-}
-export function rmvAvaliacao(id: string):RequestResult{
-  avaliacoes = avaliacoes.filter(aval=>aval.id!=id);
-  return {data:'sucesso'}
-}
-export function newAvaliacao(aval: Avaliacao): RequestResult {
-  let split = aval.data.toLocaleDateString().split('/');
-  let formartData = [split[1],split[0],split[2]].join('/')
-  if(differenceOfDays(new Date(formartData), new Date())<15){
-    return {'error': "Você só pode criar avaliações para daqui a 15 dias"}
+export async function getAvaliacoesByProfessor(email: string): Promise<RequestResult> {
+  try {
+    const token = localStorage.getItem("AgendaCPMToken");
+    const response = await api.get('/avaliacoes-professor?email=' + email, {
+      headers: {
+        'Authorization': `Basic ${token}`
+      }
+    });
+    return response.data;
   }
-  if (turmaTemDuasAvaliacoes(aval.turma, aval.data.toLocaleDateString())) {
-    return { 'error': "Essa turma já tem duas avaliações" }
+  catch (err) {
+    return err.response.data
   }
-  if (avaliacoes.find(avaliacao => isTheSameAvaliacao(avaliacao, aval))){
-    return {'error': "Você já criou essa avaliação"}
+}
+export async function rmvAvaliacao(id: string): Promise<RequestResult> {
+  try {
+    const token = localStorage.getItem("AgendaCPMToken");
+    const response = await api.delete("/?id="+id, {
+      headers: {
+        'Authorization': `Basic ${token}`
+      }
+    });
+    return response.data;
   }
-  avaliacoes.push(aval)
-  return {'data':JSON.stringify(aval)}
+  catch (err) {
+    return err.response.data
+  }
 }
-function turmaTemDuasAvaliacoes(turma: string, date: string): boolean {
-  const avals = avaliacoes.filter(aval => aval.turma == turma && aval.data.toLocaleDateString() == date)
-  return (avals.length == 2)
-}
-
-function isTheSameAvaliacao(avaliacao, aval): boolean{
-  return (avaliacao.data == aval.data &&
-  avaliacao.descricao == aval.descricao &&
-  avaliacao.disciplina == aval.disciplina &&
-  avaliacao.professor == aval.professor &&
-  avaliacao.professorEmail == aval.professorEmail &&
-  avaliacao.titulo == aval.titulo &&
-  avaliacao.turma == aval.turma)
-}
-function differenceOfDays(futuro: Date, passado: Date): number{
-  return (futuro.getTime()-passado.getTime())/(1000 * 3600 * 24)
+export async function newAvaliacao(aval): Promise<RequestResult> {
+  try {
+    const token = localStorage.getItem("AgendaCPMToken");
+    const response = await api.post("/", aval, {
+      headers: {
+        'Authorization': `Basic ${token}`
+      }
+    });
+    return response.data;
+  }
+  catch (err) {
+    return err.response.data
+  }
 }

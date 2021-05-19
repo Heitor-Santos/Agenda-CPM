@@ -20,26 +20,31 @@ import { Router } from '@angular/router';
 export class HomeComponent {
   columnsToDisplay: string[] = ["data", "disciplina","professor"]
   turmas:Turma[]
-  avaliacoes: Avaliacao[]
-  expandedElement: Avaliacao | null;
+  avaliacoesRaw: Avaliacao[]
+  expandedElement: Avaliacao | null
   selected:string
-  isLoading: boolean;
+  isLoading: boolean
+  avaliacoes: any[]
   constructor(private changeDetectorRefs: ChangeDetectorRef, private router: Router){}
   async ngOnInit() {
     this.turmas = await (await getTurmas()).data
     this.selected = this.turmas[0]?.nome || '' 
-    this.avaliacoes = await getAvaliacoes(this.selected)
+    this.avaliacoesRaw = await getAvaliacoes(this.selected);
+    this.avaliacoes = this.avaliacoesRaw as any;
+    this.avaliacoes.map(aval=>{
+      aval.data = new Date(aval.data).toLocaleDateString()
+    })
     this.isLoading = false;
   }
   async changeTurma(){
-    console.log("oi")
     this.isLoading = true
-    console.log("oi")
     await this.sleep(2000)
     this.isLoading = false;
-    console.log('ola')
-    this.avaliacoes = await getAvaliacoes(this.selected)
-    console.log(this.avaliacoes)
+    this.avaliacoesRaw = await getAvaliacoes(this.selected);
+    this.avaliacoes = this.avaliacoesRaw as any;
+    this.avaliacoes.map(aval=>{
+      aval.data = new Date(aval.data).toLocaleDateString()
+    })
     this.changeDetectorRefs.detectChanges()
   }
   async sleep(timeout: number){

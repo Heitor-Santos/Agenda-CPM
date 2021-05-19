@@ -1,7 +1,12 @@
 <mat-toolbar>
-  <img src="assets/logo.png" style="height: 40px; margin-right: 5px;"/>
-  <span>Agenda CPM</span>
+  <a class="home" href="/">
+    <img src="assets/logo.png" style="height: 40px; margin-right: 5px;" />
+    <span>Agenda CPM</span>
+  </a>
   <span class="example-spacer"></span>
-  <a mat-stroked-button href={{gerencia}}>Gerência</a>
+  <a mat-stroked-button class="ger" href={{gerencia}} *ngIf="!isOn else logout">Gerência</a>
+  <ng-template #logout>
+    <button mat-stroked-button class="logout-button" (click)="logoutAccount()"><mat-icon>logout</mat-icon>sair</button>
+  </ng-template>
 </mat-toolbar>
 <router-outlet></router-outlet>

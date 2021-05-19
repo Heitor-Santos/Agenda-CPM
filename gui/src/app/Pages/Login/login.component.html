@@ -5,7 +5,7 @@
     <p>
       <mat-form-field class="form-field">
         <mat-label>Digite seu email</mat-label>
-        <input type="email" placeholder="eumesmo@email.com" matInput [formControl]="emailFormControl"
+        <input type="email" id="email" placeholder="eumesmo@email.com" matInput [formControl]="emailFormControl"
           [errorStateMatcher]="matcher">
         <mat-error *ngIf="emailFormControl.hasError('email') && !emailFormControl.hasError('required')">
           Por favor, digite um email válido
@@ -18,16 +18,14 @@
     <p>
       <mat-form-field class="form-field">
         <mat-label>Digite sua senha</mat-label>
-        <input matInput type="password" placeholder="******" [formControl]="passwordFormControl">
+        <input id="password" matInput type="password" placeholder="******" [formControl]="passwordFormControl">
         <mat-error *ngIf="passwordFormControl.hasError('required')">
           A senha é <strong>obrigatória</strong>
         </mat-error>
       </mat-form-field>
     </p>
     <p>
-      <button mat-flat-button color="primary" id="bt-login">Login</button>
+      <button mat-flat-button color="primary" id="bt-login" (click)="login()">Login</button>
     </p>
-    <a href="https://google.com" id="criar-conta">Ainda não tem conta? Crie uma!
-    </a>
   </mat-card>
 </form>

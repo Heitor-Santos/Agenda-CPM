@@ -8,6 +8,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { FormControl, FormGroupDirective, NgForm, Validators } from '@angular/forms';
 import { ErrorStateMatcher } from '@angular/material/core';
 import { sendInvite } from 'src/requests/admin';
+import { Router } from '@angular/router';
 
 class MyErrorStateMatcher implements ErrorStateMatcher {
   isErrorState(control: FormControl | null, form: FormGroupDirective | NgForm | null): boolean {
@@ -29,12 +30,13 @@ export class AdminComponent {
   isLoadingInvite: boolean
   isLoadingTurma: boolean
   isLoadingCriar: boolean
+  allowed: boolean = false;
   emailFormControl = new FormControl('', [
     Validators.required,
     Validators.email,
   ]);
   matcher = new MyErrorStateMatcher()
-  constructor(public dialog: MatDialog, public snackBar: MatSnackBar) { }
+  constructor(private router: Router,public dialog: MatDialog, public snackBar: MatSnackBar) { }
 
   async ngOnInit() {
     this.isLoading = false
@@ -42,7 +44,10 @@ export class AdminComponent {
     this.isLoadingTurma = false
     this.isLoadingCriar = false
     this.turmas = (await getTurmas()).data
+    const profs = await getProfessores();
+    if(profs.error) this.router.navigateByUrl("/")
     this.professores = (await getProfessores()).data
+    this.allowed = true;
   }
 
   formalName(nome: string): string {
