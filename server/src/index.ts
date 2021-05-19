@@ -25,7 +25,13 @@ const INDEX_PATH = path.join(
 
 app.use(express.static(INDEX_PATH));
 app.get('/*', (_req: Request, res: Response) => {
-    return res.sendFile(`${INDEX_PATH}/index.html`);
+    try{
+        return res.sendFile(`${INDEX_PATH}/index.html`);
+    }
+    catch(err){
+        console.log(err);
+        return res.send({msg:err})
+    }
 });
 
 const mongoString = process.env.MONGOSTRING as string;
