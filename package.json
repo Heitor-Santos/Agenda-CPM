@@ -1,7 +1,6 @@
 {   "name":"agenda-cpm",
     "scripts": {
-        "start": "cd server && npm i && npm start",
-        "postinstall": "cd server && npm run tsc"
+        "start": "cd server && npm i && npm start"
     },
     "engines": {
         "node": "14.17.0"
