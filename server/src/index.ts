@@ -23,17 +23,6 @@ const INDEX_PATH = path.join(
     'Agenda-CPM'
 );
 
-app.use(express.static(INDEX_PATH));
-app.get('/*', (_req: Request, res: Response) => {
-    try{
-        return res.sendFile(`${INDEX_PATH}/index.html`);
-    }
-    catch(err){
-        console.log(err);
-        return res.send({msg:err})
-    }
-});
-
 const mongoString = process.env.MONGOSTRING as string;
 const port = process.env.PORT as string;
 const dbname = process.env.DB_NAME as string;
@@ -45,7 +34,17 @@ mongoose.connect(mongoString, options, (err, client) => {
         db = client.db(dbname)
         console.log("Mongo conectado")
         db.collection('professores').updateMany({ code: { $exists: false } }, { $set: { "type": "professor" } })
-        app.use('/api', routes(db))
+        app.use('/api', routes(db));
+        app.use(express.static(INDEX_PATH));
+        app.get('/*', (_req: Request, res: Response) => {
+            try{
+                return res.sendFile(`${INDEX_PATH}/index.html`);
+            }
+            catch(err){
+                console.log(err);
+                return res.send({msg:err})
+            }
+        });
         app.listen(port, () => {
             console.log(`Servidor ouvindo na porta ${port}`)
         })

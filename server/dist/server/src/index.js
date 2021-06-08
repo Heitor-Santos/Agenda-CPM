@@ -16,16 +16,6 @@ app.use(cors_1.default());
 app.use(express_1.default.json());
 app.use(body_parser_1.default.json());
 const INDEX_PATH = path_1.default.join(__dirname, '..', '..', '..', '..', 'gui', 'dist', 'Agenda-CPM');
-app.use(express_1.default.static(INDEX_PATH));
-app.get('/*', (_req, res) => {
-    try {
-        return res.sendFile(`${INDEX_PATH}/index.html`);
-    }
-    catch (err) {
-        console.log(err);
-        return res.send({ msg: err });
-    }
-});
 const mongoString = process.env.MONGOSTRING;
 const port = process.env.PORT;
 const dbname = process.env.DB_NAME;
@@ -37,6 +27,16 @@ mongodb_1.default.connect(mongoString, options, (err, client) => {
         console.log("Mongo conectado");
         db.collection('professores').updateMany({ code: { $exists: false } }, { $set: { "type": "professor" } });
         app.use('/api', routes_1.default(db));
+        app.use(express_1.default.static(INDEX_PATH));
+        app.get('/*', (_req, res) => {
+            try {
+                return res.sendFile(`${INDEX_PATH}/index.html`);
+            }
+            catch (err) {
+                console.log(err);
+                return res.send({ msg: err });
+            }
+        });
         app.listen(port, () => {
             console.log(`Servidor ouvindo na porta ${port}`);
         });
