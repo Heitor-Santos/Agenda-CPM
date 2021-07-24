@@ -39,6 +39,7 @@ import {MatPaginatorModule} from '@angular/material/paginator';
 import { HomeComponent } from './Pages/Home/home.component';
 import { LoginComponent } from './Pages/Login/login.component';
 import { SignupComponent } from './Pages/Signup/signup.component';
+import { ForgotPassComponent } from './Pages/ForgotPass/forgotpass.component';
 import { AdminComponent, DialogDeleteProf, DialogDeleteTurma } from './Pages/Admin/admin.component'
 import { ProfessorComponent, DialogInfoAval } from './Pages/Professor/prof.component';
 
@@ -48,6 +49,7 @@ import { ProfessorComponent, DialogInfoAval } from './Pages/Professor/prof.compo
     HomeComponent,
     LoginComponent,
     SignupComponent,
+    ForgotPassComponent,
     AdminComponent,
     DialogDeleteProf,
     DialogDeleteTurma,

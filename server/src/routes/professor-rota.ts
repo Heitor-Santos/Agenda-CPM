@@ -1,4 +1,4 @@
-import { getAllProfessores, getProfessorCode, updateProfessorCode, rmvProfessor, login, signup} from '../controllers/professor-controller';
+import { getAllProfessores, getProfessorCode, updateProfessorCode, rmvProfessor, login, signup, changePass} from '../controllers/professor-controller';
 import ensureAuthenticated from '../helpers/ensureAuthenticated';
 import mongoose from 'mongodb'
 import { Router } from 'express';
@@ -12,5 +12,6 @@ export default function (db: mongoose.Db): Router {
     routes.delete('/', ensureAuthenticated, (req, res) => rmvProfessor(req, res, db))
     routes.post('/login',(req,res)=> login(req,res,db))
     routes.post('/signup',(req,res)=> signup(req,res,db))
+    routes.post('/change-pass',(req,res)=> changePass(req,res,db))
     return routes
 }

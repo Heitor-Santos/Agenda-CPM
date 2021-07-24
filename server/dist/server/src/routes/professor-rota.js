@@ -14,6 +14,7 @@ function default_1(db) {
     routes.delete('/', ensureAuthenticated_1.default, (req, res) => professor_controller_1.rmvProfessor(req, res, db));
     routes.post('/login', (req, res) => professor_controller_1.login(req, res, db));
     routes.post('/signup', (req, res) => professor_controller_1.signup(req, res, db));
+    routes.post('/change-pass', (req, res) => professor_controller_1.changePass(req, res, db));
     return routes;
 }
 exports.default = default_1;

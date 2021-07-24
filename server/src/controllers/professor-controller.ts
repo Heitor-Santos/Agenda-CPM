@@ -118,8 +118,8 @@ export async function signup(req: Request, res: Response, db: mongoose.Db) {
     if (user) {
         return res.status(401).send({ error: "Uma conta com esse email já existe" });
     }
-    const invite = await db.collection('invites').findOne({ email: userReq.email });
-    if (!invite || invite.token != userReq.token) {
+    const invites = await (db.collection('invites').find({ email: userReq.email })).toArray();
+    if (!invites.length || !invites.some(invite => invite.token == userReq.token)) {
         return res.status(403).send({ error: "token de acesso inválido" });
     }
     delete userReq["token"];
@@ -131,5 +131,23 @@ export async function signup(req: Request, res: Response, db: mongoose.Db) {
     userReq["safety_answer"] = await hash(safety_answer, 12);
     console.log(userReq)
     await db.collection('professores').insertOne(userReq)
+    return res.send({ data: { user } });
+}
+
+export async function changePass(req: Request, res: Response, db: mongoose.Db) {
+    const userReq = req.body;
+    const user = await findProfessorPrivate(userReq.email as string, db) as any;
+    if (!user) {
+        return res.status(401).send({ error: "Usuário não existe" });
+    }
+    const questionMatched = userReq.safety_question == user.safety_question;
+    let safety_answer = userReq["safety_answer"].normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    safety_answer = safety_answer.toLowerCase();
+    const answerMatched = await compare(safety_answer as string, user.safety_answer);
+    if (!questionMatched || !answerMatched) {
+        return res.status(403).send({ error: "Combinação pergunta/resposta incorreta" });
+    }
+    const newPassword = await hash(userReq["password"], 12);
+    await db.collection('professores').updateOne({ email: userReq.email }, { $set: { senha: newPassword } })
     return res.send({ data: { user } });
 }

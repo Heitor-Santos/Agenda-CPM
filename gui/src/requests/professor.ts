@@ -44,3 +44,13 @@ export async function signup(name: string, email: string, password: string, toke
         return err.response.data
     }
 }
+
+export async function changePassword(email: string, password: string, safety_question: string, safety_answer: string) {
+    try {
+        const response = await api.post("/change-pass", { email, password, safety_question, safety_answer })
+        return response.data;
+    }
+    catch (err) {
+        return err.response.data
+    }
+}

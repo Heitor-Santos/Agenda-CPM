@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.signup = exports.login = exports.rmvProfessor = exports.updateProfessorCode = exports.getProfessorCode = exports.getAllProfessores = void 0;
+exports.changePass = exports.signup = exports.login = exports.rmvProfessor = exports.updateProfessorCode = exports.getProfessorCode = exports.getAllProfessores = void 0;
 const bcryptjs_1 = require("bcryptjs");
 const jsonwebtoken_1 = require("jsonwebtoken");
 const auth_1 = __importDefault(require("../helpers/auth"));
@@ -115,8 +115,8 @@ async function signup(req, res, db) {
     if (user) {
         return res.status(401).send({ error: "Uma conta com esse email já existe" });
     }
-    const invite = await db.collection('invites').findOne({ email: userReq.email });
-    if (!invite || invite.token != userReq.token) {
+    const invites = await (db.collection('invites').find({ email: userReq.email })).toArray();
+    if (!invites.length || !invites.some(invite => invite.token == userReq.token)) {
         return res.status(403).send({ error: "token de acesso inválido" });
     }
     delete userReq["token"];
@@ -131,4 +131,22 @@ async function signup(req, res, db) {
     return res.send({ data: { user } });
 }
 exports.signup = signup;
+async function changePass(req, res, db) {
+    const userReq = req.body;
+    const user = await findProfessorPrivate(userReq.email, db);
+    if (!user) {
+        return res.status(401).send({ error: "Usuário não existe" });
+    }
+    const questionMatched = userReq.safety_question == user.safety_question;
+    let safety_answer = userReq["safety_answer"].normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    safety_answer = safety_answer.toLowerCase();
+    const answerMatched = await bcryptjs_1.compare(safety_answer, user.safety_answer);
+    if (!questionMatched || !answerMatched) {
+        return res.status(403).send({ error: "Combinação pergunta/resposta incorreta" });
+    }
+    const newPassword = await bcryptjs_1.hash(userReq["password"], 12);
+    await db.collection('professores').updateOne({ email: userReq.email }, { $set: { senha: newPassword } });
+    return res.send({ data: { user } });
+}
+exports.changePass = changePass;
 //# sourceMappingURL=professor-controller.js.map

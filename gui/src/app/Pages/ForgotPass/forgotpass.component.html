@@ -1,0 +1,58 @@
+<form [formGroup]="registerForm">
+  <mat-card id="card-login">
+    <img src="assets/logo.png" style="height: 70px;"/> 
+    <p>Responda a pergunta de segurança para trocar sua senha</p>
+    <p>
+      <mat-form-field class="form-field">
+        <mat-label>Digite seu email</mat-label>
+        <input type="email" placeholder="eumesmo@email.com" matInput formControlName="email" id="email">
+        <mat-error *ngIf="registerForm.get('email').hasError('email') && !registerForm.get('email').hasError('required')">
+          Por favor, digite um email válido
+        </mat-error>
+        <mat-error *ngIf="registerForm.get('email').hasError('required')">
+          O email é <strong>obrigatório</strong>
+        </mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field class="form-field">
+        <mat-label>Digite sua nova senha</mat-label>
+        <input matInput type="password" placeholder="******" formControlName="newPassword" id="password">
+        <mat-error *ngIf="registerForm.get('newPassword').hasError('required')">
+          A senha é <strong>obrigatória</strong>
+        </mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field class="form-field">
+        <mat-label>Sua pergunta de segurança</mat-label>
+        <mat-select formControlName="safetyQuestion" id="saftquest" [(value)]="safetyQuestion">
+          <mat-option *ngFor="let question of safetyQuestions" [value]="question">
+            {{question}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="registerForm.get('safetyQuestion').hasError('required')">
+          A pergunta é <strong>obrigatória</strong>
+        </mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field class="form-field">
+        <mat-label>Digite a resposta para a pergunta</mat-label>
+        <input matInput type="text" placeholder="******" formControlName="safetyAnswer" id="saftans">
+        <mat-error *ngIf="registerForm.get('safetyAnswer').hasError('required')">
+          A resposta é <strong>obrigatória</strong>
+        </mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <button mat-flat-button color="primary" [disabled]="!registerForm.valid" id="bt-login" *ngIf="!isLoading else loading" (click)="changePassword()">Trocar senha</button>
+      <ng-template #loading>
+        <div class="loading flex-box">
+          <mat-progress-spinner color="primary" mode="indeterminate">
+          </mat-progress-spinner>
+        </div>
+      </ng-template>
+    </p>
+  </mat-card>
+</form>

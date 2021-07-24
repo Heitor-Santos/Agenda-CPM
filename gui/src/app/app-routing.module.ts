@@ -5,6 +5,7 @@ import { LoginComponent } from "./Pages/Login/login.component";
 import { SignupComponent } from "./Pages/Signup/signup.component";
 import { AdminComponent } from "./Pages/Admin/admin.component"
 import { ProfessorComponent } from './Pages/Professor/prof.component';
+import { ForgotPassComponent } from './Pages/ForgotPass/forgotpass.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,11 @@ const routes: Routes = [
   {
     path:'prof',
     component: ProfessorComponent,
+    pathMatch:"full"
+  },
+  {
+    path:'forgot-pass',
+    component: ForgotPassComponent,
     pathMatch:"full"
   }
 ]
