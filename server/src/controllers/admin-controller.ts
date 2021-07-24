@@ -21,6 +21,7 @@ export async function invite(req: Request, res: Response, db: mongoose.Db) {
         return res.send({ data: "Convite enviado" })
     }
     catch (error) {
+        console.log(error)
         return res.send({ error: "Não pudemos enviar o convite" })
     }
 }

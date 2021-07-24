@@ -113,6 +113,7 @@ async function findProfessorPrivate(email: string, db: mongoose.Db): Promise<Pro
 
 export async function signup(req: Request, res: Response, db: mongoose.Db) {
     const userReq = req.body;
+    console.log(userReq)
     const user = await findProfessorPrivate(userReq.email as string, db);
     if (user) {
         return res.status(401).send({ error: "Uma conta com esse email já existe" });
@@ -121,8 +122,14 @@ export async function signup(req: Request, res: Response, db: mongoose.Db) {
     if (!invite || invite.token != userReq.token) {
         return res.status(403).send({ error: "token de acesso inválido" });
     }
+    delete userReq["token"];
     userReq["type"] = "professor";
-    userReq["password"] = await hash(userReq["password"], 12);
+    userReq["senha"] = await hash(userReq["password"], 12);
+    delete userReq["password"];
+    let safety_answer = userReq["safety_answer"].normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+    safety_answer = safety_answer.toLowerCase();
+    userReq["safety_answer"] = await hash(safety_answer, 12);
+    console.log(userReq)
     await db.collection('professores').insertOne(userReq)
     return res.send({ data: { user } });
 }

@@ -110,6 +110,7 @@ async function findProfessorPrivate(email, db) {
 }
 async function signup(req, res, db) {
     const userReq = req.body;
+    console.log(userReq);
     const user = await findProfessorPrivate(userReq.email, db);
     if (user) {
         return res.status(401).send({ error: "Uma conta com esse email já existe" });
@@ -118,8 +119,14 @@ async function signup(req, res, db) {
     if (!invite || invite.token != userReq.token) {
         return res.status(403).send({ error: "token de acesso inválido" });
     }
+    delete userReq["token"];
     userReq["type"] = "professor";
-    userReq["password"] = await bcryptjs_1.hash(userReq["password"], 12);
+    userReq["senha"] = await bcryptjs_1.hash(userReq["password"], 12);
+    delete userReq["password"];
+    let safety_answer = userReq["safety_answer"].normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    safety_answer = safety_answer.toLowerCase();
+    userReq["safety_answer"] = await bcryptjs_1.hash(safety_answer, 12);
+    console.log(userReq);
     await db.collection('professores').insertOne(userReq);
     return res.send({ data: { user } });
 }

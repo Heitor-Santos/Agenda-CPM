@@ -33,7 +33,6 @@ mongoose.connect(mongoString, options, (err, client) => {
     if (!err) {
         db = client.db(dbname)
         console.log("Mongo conectado")
-        db.collection('professores').updateMany({ code: { $exists: false } }, { $set: { "type": "professor" } })
         app.use('/api', routes(db));
         app.use(express.static(INDEX_PATH));
         app.get('/*', (_req: Request, res: Response) => {

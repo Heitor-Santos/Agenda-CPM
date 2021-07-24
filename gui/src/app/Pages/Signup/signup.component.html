@@ -33,6 +33,28 @@
       </mat-form-field>
     </p>
     <p>
+      <mat-form-field class="form-field">
+        <mat-label>Sua pergunta de segurança</mat-label>
+        <mat-select formControlName="safetyQuestion" id="saftquest" [(value)]="safetyQuestion">
+          <mat-option *ngFor="let question of safetyQuestions" [value]="question">
+            {{question}}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="registerForm.get('safetyQuestion').hasError('required')">
+          A pergunta é <strong>obrigatória</strong>
+        </mat-error>
+      </mat-form-field>
+    </p>
+    <p>
+      <mat-form-field class="form-field">
+        <mat-label>Digite a resposta para a pergunta</mat-label>
+        <input matInput type="text" placeholder="******" formControlName="safetyAnswer" id="saftans">
+        <mat-error *ngIf="registerForm.get('safetyAnswer').hasError('required')">
+          A resposta é <strong>obrigatória</strong>
+        </mat-error>
+      </mat-form-field>
+    </p>
+    <p>
       <button mat-flat-button color="primary" [disabled]="!registerForm.valid" id="bt-login" *ngIf="!isLoading else loading" (click)="signup()">Criar conta</button>
       <ng-template #loading>
         <div class="loading flex-box">

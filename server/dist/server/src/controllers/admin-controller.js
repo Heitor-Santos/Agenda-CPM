@@ -24,6 +24,7 @@ async function invite(req, res, db) {
         return res.send({ data: "Convite enviado" });
     }
     catch (error) {
+        console.log(error);
         return res.send({ error: "Não pudemos enviar o convite" });
     }
 }

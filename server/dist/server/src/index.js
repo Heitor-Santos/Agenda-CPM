@@ -25,7 +25,6 @@ mongodb_1.default.connect(mongoString, options, (err, client) => {
     if (!err) {
         db = client.db(dbname);
         console.log("Mongo conectado");
-        db.collection('professores').updateMany({ code: { $exists: false } }, { $set: { "type": "professor" } });
         app.use('/api', routes_1.default(db));
         app.use(express_1.default.static(INDEX_PATH));
         app.get('/*', (_req, res) => {
