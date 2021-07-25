@@ -519,8 +519,9 @@ class AdminComponent {
         });
     }
     formalName(nome) {
-        const nomes = nome.split(' ');
-        return nomes.length == 1 ? nomes[0] : `${nomes[0]} ${nomes[nomes.length - 1]}`;
+        // /const nomes = nome.split(' ')
+        //return nomes.length == 1 ? nomes[0] : `${nomes[0]} ${nomes[nomes.length - 1]}`
+        return nome;
     }
     createTurma() {
         return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
@@ -1298,10 +1299,10 @@ function login(email, password) {
         }
     });
 }
-function signup(name, email, password, token, safety_question, safety_answer) {
+function signup(nome, email, password, token, safety_question, safety_answer) {
     return Object(tslib__WEBPACK_IMPORTED_MODULE_0__["__awaiter"])(this, void 0, void 0, function* () {
         try {
-            const response = yield api.post("/signup", { name, email, password, token, safety_question, safety_answer });
+            const response = yield api.post("/signup", { nome, email, password, token, safety_question, safety_answer });
             return response.data;
         }
         catch (err) {

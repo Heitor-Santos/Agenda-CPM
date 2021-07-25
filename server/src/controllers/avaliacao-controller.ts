@@ -6,7 +6,7 @@ import { Avaliacao, RequestResult } from '../../../common/interfaces'
 export async function getAvaliacoesByTurma(req: Request, res: Response, db: mongoose.Db) {
     let response: RequestResult
     try {
-        const avaliacoes = await findAvaliacoes({turma: req.query.turma}, db)
+        const avaliacoes = await findAvaliacoes({ turma: req.query.turma, data: { $gte: new Date().toISOString() } }, db)
         response = { data: JSON.stringify(avaliacoes) }
     }
     catch (error) {
@@ -18,7 +18,7 @@ export async function getAvaliacoesByProfessor(req: Request, res: Response, db: 
     let response: RequestResult
 
     try {
-        const avaliacoes = await findAvaliacoes({professorEmail: req.query.email}, db)
+        const avaliacoes = await findAvaliacoes({ professorEmail: req.query.email }, db)
         response = { data: avaliacoes }
     }
     catch (error) {
@@ -28,7 +28,7 @@ export async function getAvaliacoesByProfessor(req: Request, res: Response, db: 
 }
 
 async function findAvaliacoes(query: Object, db: mongoose.Db): Promise<Avaliacao[]> {
-    const avaliacoes: Avaliacao[] = await db.collection('avaliacoes').find(query).project({ _id: 0 }).sort({data:1}) .toArray()
+    const avaliacoes: Avaliacao[] = await db.collection('avaliacoes').find(query).project({ _id: 0 }).sort({ data: 1 }).toArray()
     return avaliacoes;
 }
 
@@ -45,6 +45,7 @@ export async function rmvAvaliacao(req: Request, res: Response, db: mongoose.Db)
     return res.send(response)
 }
 export async function newAvaliacao(req: Request, res: Response, db: mongoose.Db) {
+    console.log(req.body)
     let split = req.body.data.split('/');
     let formartData = [split[1], split[0], split[2]].join('/')
     req.body.data = formartData;
@@ -59,8 +60,9 @@ export async function newAvaliacao(req: Request, res: Response, db: mongoose.Db)
     }
     let response: RequestResult
     try {
-        let aval = Object.assign({id:uuid()},req.body)
-        aval.data = new Date(aval.data)
+        let aval = Object.assign({ id: uuid() }, req.body)
+        aval.data = new Date(aval.data).toISOString()
+        console.log(aval)
         await db.collection('avaliacoes').insertOne(aval);
         response = { data: aval }
     }
@@ -70,14 +72,14 @@ export async function newAvaliacao(req: Request, res: Response, db: mongoose.Db)
     return res.send(response)
 }
 
-async function turmaTemDuasAvaliacoes(turma: string, date: string, db:mongoose.Db): Promise<boolean> {
-    const avals = await findAvaliacoes({turma, data: new Date(date)}, db)
+async function turmaTemDuasAvaliacoes(turma: string, date: string, db: mongoose.Db): Promise<boolean> {
+    const avals = await findAvaliacoes({ turma, data: new Date(date) }, db)
     return (avals.length >= 2)
 }
 
-async function jaExisteAvaliacao(avaliacao: Avaliacao, db:mongoose.Db): Promise<boolean> {
+async function jaExisteAvaliacao(avaliacao: Avaliacao, db: mongoose.Db): Promise<boolean> {
     const aval = await db.collection('avaliacoes').findOne(avaliacao)
-    return aval!=null
+    return aval != null
 }
 function differenceOfDays(futuro: Date, passado: Date): number {
     return (futuro.getTime() - passado.getTime()) / (1000 * 3600 * 24)

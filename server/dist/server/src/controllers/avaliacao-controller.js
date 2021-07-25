@@ -5,7 +5,7 @@ const uuidv4_1 = require("uuidv4");
 async function getAvaliacoesByTurma(req, res, db) {
     let response;
     try {
-        const avaliacoes = await findAvaliacoes({ turma: req.query.turma }, db);
+        const avaliacoes = await findAvaliacoes({ turma: req.query.turma, data: { $gte: new Date().toISOString() } }, db);
         response = { data: JSON.stringify(avaliacoes) };
     }
     catch (error) {
@@ -44,6 +44,7 @@ async function rmvAvaliacao(req, res, db) {
 }
 exports.rmvAvaliacao = rmvAvaliacao;
 async function newAvaliacao(req, res, db) {
+    console.log(req.body);
     let split = req.body.data.split('/');
     let formartData = [split[1], split[0], split[2]].join('/');
     req.body.data = formartData;
@@ -59,7 +60,8 @@ async function newAvaliacao(req, res, db) {
     let response;
     try {
         let aval = Object.assign({ id: uuidv4_1.uuid() }, req.body);
-        aval.data = new Date(aval.data);
+        aval.data = new Date(aval.data).toISOString();
+        console.log(aval);
         await db.collection('avaliacoes').insertOne(aval);
         response = { data: aval };
     }

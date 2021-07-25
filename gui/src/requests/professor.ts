@@ -35,9 +35,9 @@ export async function login(email: string, password: string) {
     }
 }
 
-export async function signup(name: string, email: string, password: string, token: string,  safety_question: string, safety_answer: string) {
+export async function signup(nome: string, email: string, password: string, token: string,  safety_question: string, safety_answer: string) {
     try {
-        const response = await api.post("/signup", { name, email, password, token, safety_question, safety_answer })
+        const response = await api.post("/signup", { nome, email, password, token, safety_question, safety_answer })
         return response.data;
     }
     catch (err) {

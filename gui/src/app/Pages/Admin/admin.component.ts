@@ -51,8 +51,9 @@ export class AdminComponent {
   }
 
   formalName(nome: string): string {
-    const nomes = nome.split(' ')
-    return nomes.length == 1 ? nomes[0] : `${nomes[0]} ${nomes[nomes.length - 1]}`
+    // /const nomes = nome.split(' ')
+    //return nomes.length == 1 ? nomes[0] : `${nomes[0]} ${nomes[nomes.length - 1]}`
+    return nome
   }
 
   async createTurma() {
